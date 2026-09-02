@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/davidfung/peacock/internal/probe/alive"
 )
 
 func streamHandler(w http.ResponseWriter, r *http.Request) {
@@ -21,14 +23,20 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
+	ch := alive.Load()
+
 	for {
 		select {
 		case <-r.Context().Done(): // client disconnected
 			log.Println("[i] client disconnected")
 			return
 		case t := <-ticker.C:
-			fmt.Fprintf(w, "data: current time is %s\n\n", t.Format(time.RFC3339))
+			fmt.Fprintf(w, "data: [xxx] current time is %s\n\n", t.Format(time.RFC3339))
 			flusher.Flush()
+		case t1 := <-ch:
+			fmt.Fprintf(w, "data: %s\n\n", t1)
+			flusher.Flush()
+
 		}
 	}
 }

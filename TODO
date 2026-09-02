@@ -1,0 +1,7 @@
+= TODO
+
+[x] tag each stream handler with a unique number and log
+[x] separate the alive ticker into a separate file
+[ ] change the alive ticker to 1 tick/minute
+[x] cover ticker time channel to string channel
+[x] loadProbe

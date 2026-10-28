@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
-	"github.com/davidfung/peacock/internal/probe/alive"
+	"github.com/davidfung/peacock/probe/alive"
+	"github.com/davidfung/peacock/probe/motd"
 )
 
 func streamHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,23 +20,20 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	ticker := time.NewTicker(1 * time.Second)
-	defer ticker.Stop()
-
-	ch := alive.Load()
+	// load probes
+	var msg string
 
 	for {
 		select {
 		case <-r.Context().Done(): // client disconnected
 			log.Println("[i] client disconnected")
 			return
-		case t := <-ticker.C:
-			fmt.Fprintf(w, "data: [xxx] current time is %s\n\n", t.Format(time.RFC3339))
+		case msg = <-motd.Load():
+			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
-		case t1 := <-ch:
-			fmt.Fprintf(w, "data: %s\n\n", t1)
+		case msg = <-alive.Load():
+			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
-
 		}
 	}
 }

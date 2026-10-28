@@ -1,0 +1,19 @@
+= Peacock
+
+== Probe
+
+A probe is a piece of code that scan an object of
+interest and report anything interesting.
+
+It provides a Load() function to load the probe.  The Load()
+function takes no argument and returns a read-only string
+channel.
+
+=== A list of potential probes
+
+* alive
+* motd
+* ip - change
+* dns - change
+* WiFi - change (new * gone)
+

@@ -1,0 +1,5 @@
+The probes are not packaged inside an "internal" folder because although
+they are not supposed to be used standalone, there is no technical reason
+to make them internal to the project.
+
+

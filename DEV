@@ -1,0 +1,15 @@
+= Dev Notes
+
+== Publish a new version
+
+  $ git tag v1.YY.M
+  $ git push origin tag v1.YY.M
+
+== Upgrade a dependency
+
+Upgrading a package dependency to a newer version is intentionally a manually
+process in Go.
+
+  $ go list -m -u all
+  $ go get pkg@latest
+  $ go mod tidy

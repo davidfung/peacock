@@ -8,9 +8,7 @@ import (
 	"time"
 )
 
-func Load() <-chan string {
-	ch := make(chan string, 5)
-
+func Load(out chan<- string) {
 	go func() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
@@ -19,10 +17,8 @@ func Load() <-chan string {
 			select {
 			case t := <-ticker.C:
 				s := fmt.Sprintf("current time is %s", t.Format(time.RFC3339))
-				ch <- s
+				out <- s
 			}
 		}
 	}()
-
-	return ch
 }

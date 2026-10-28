@@ -9,9 +9,7 @@ import (
 	"github.com/davidfung/motd"
 )
 
-func Load() <-chan string {
-	ch := make(chan string)
-
+func Load(out chan<- string) {
 	go func() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
@@ -21,10 +19,8 @@ func Load() <-chan string {
 			case <-ticker.C:
 				msg := motd.Next()
 				s := fmt.Sprintf("%s", msg)
-				ch <- s
+				out <- s
 			}
 		}
 	}()
-
-	return ch
 }

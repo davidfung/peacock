@@ -20,18 +20,18 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
+	ch := make(chan string)
+
 	// load probes
-	var msg string
+	alive.Load(ch)
+	motd.Load(ch)
 
 	for {
 		select {
 		case <-r.Context().Done(): // client disconnected
 			log.Println("[i] client disconnected")
 			return
-		case msg = <-motd.Load():
-			fmt.Fprintf(w, "data: %s\n\n", msg)
-			flusher.Flush()
-		case msg = <-alive.Load():
+		case msg := <-ch:
 			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
 		}

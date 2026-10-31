@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/davidfung/peacock/probe/alive"
 	"github.com/davidfung/peacock/probe/motd"
@@ -60,8 +61,16 @@ evtSource.onmessage = (event) => {
 }
 
 func main() {
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/stream", streamHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc("/stream", streamHandler)
+	svr := http.Server{
+		Addr:         ":8000",
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 90 * time.Second,
+		IdleTimeout:  120 * time.Second,
+		Handler:      mux,
+	}
 	log.Println("[i] listening on :8000")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(svr.ListenAndServe())
 }

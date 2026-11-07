@@ -10,6 +10,8 @@ import (
 	"github.com/davidfung/peacock/probe/motd"
 )
 
+const chanSize = 100
+
 func streamHandler(w http.ResponseWriter, r *http.Request) {
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -21,9 +23,8 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	ch := make(chan string)
+	ch := make(chan string, chanSize)
 
-	// load probes
 	alive.Load(ch)
 	motd.Load(ch)
 
@@ -33,6 +34,7 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("[i] client disconnected")
 			return
 		case msg := <-ch:
+			msg = fmt.Sprintf("[%s] %s", time.Now().Format(time.RFC3339), msg)
 			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
 		}
@@ -54,7 +56,7 @@ evtSource.onmessage = (event) => {
   window.scrollTo(0, document.body.scrollHeight);
 };
 </script>
-<div id="output">Waiting...</div>
+<div id="output">Welcome to Peacock!</div>
 </body>
 </html>
 `)

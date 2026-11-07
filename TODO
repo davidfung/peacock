@@ -1,11 +1,6 @@
 = TODO
 
-[x] tag each stream handler with a unique number and log
-[x] separate the alive ticker into a separate file
-[ ] change the beacon to 1 tick/minute
-[x] covert ticker time channel to string channel
-[x] loadProbe
-[ ] remove original ticker probe
-[ ] improve server code
-[ ] add a new probe
+[x] change the beacon to 1 tick/hour
+[x] change the motd to 1 tick/day
+[ ] change timestamp to yymmdd hhnnss format
 

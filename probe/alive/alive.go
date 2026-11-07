@@ -1,23 +1,27 @@
-// Package alive implements a probe to show that the server is
-// alive.
+// Package alive implements a probe to show that the server is alive.
 
 package alive
 
 import (
-	"fmt"
 	"time"
 )
 
-func Load(out chan<- string) {
-	go func() {
-		ticker := time.NewTicker(1 * time.Second)
-		defer ticker.Stop()
+const interval = 1 * time.Hour
 
+func send(out chan<- string) {
+	out <- "Alive"
+}
+
+func Load(out chan<- string) {
+	send(out)
+	go func() {
+		const interval = 1 * time.Hour
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
 		for {
 			select {
-			case t := <-ticker.C:
-				s := fmt.Sprintf("current time is %s", t.Format(time.RFC3339))
-				out <- s
+			case <-ticker.C:
+				send(out)
 			}
 		}
 	}()

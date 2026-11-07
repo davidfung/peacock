@@ -6,11 +6,12 @@
 
 == Probe
 
-A probe is a piece of code that scan an object of interest and report anything
+A probe is a piece of code that scan an object of and report anything
 interesting.
 
 It provides a Load() function to load the probe.  The Load() function takes one
-argument of type write-only channel of string.  It returns nothing.
+argument of type chan<- string (write-only channel of string).  It returns
+nothing.
 
 The probes are not packaged inside an "internal" folder because although they
 are not supposed to be used standalone, there is no technical reason to make

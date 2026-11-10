@@ -12,6 +12,11 @@ import (
 
 const chanSize = 100
 
+func addTS(msg string) string {
+	msg = fmt.Sprintf("[%s] %s", time.Now().Format("060102 150405"), msg)
+	return msg
+}
+
 func streamHandler(w http.ResponseWriter, r *http.Request) {
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -34,8 +39,7 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("[i] client disconnected")
 			return
 		case msg := <-ch:
-			msg = fmt.Sprintf("[%s] %s", time.Now().Format(time.RFC3339), msg)
-			fmt.Fprintf(w, "data: %s\n\n", msg)
+			fmt.Fprintf(w, "data: %s\n\n", addTS(msg))
 			flusher.Flush()
 		}
 	}
